@@ -228,6 +228,52 @@
             pointer-events: none;
             z-index: 100;
         }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                width: 90%;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+
+            .kanji {
+                font-size: 1.5rem;
+            }
+
+            .status {
+                font-size: 0.9rem;
+                white-space: normal; /* Allow wrapping on small screens */
+                animation: none; /* Disable typewriter on mobile for readability */
+                border-right: none;
+            }
+
+            .info {
+                font-size: 0.9rem;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 1rem;
+            }
+
+            .terminal {
+                width: 95%;
+                height: 70vh; /* Taller on mobile */
+                font-size: 12px;
+                padding: 10px;
+            }
+            
+            .terminal-header {
+                font-size: 0.8rem;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -242,7 +288,7 @@
         <div class="corner br"></div>
 
         <h1>AKIRA</h1>
-        <span class="kanji">金田 輝 (Project Aruo)</span>
+        <span class="kanji">金田 輝</span>
 
         <div class="status">System Status: ONLINE // Haro's Assistant</div>
 
