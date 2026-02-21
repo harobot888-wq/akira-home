@@ -10,6 +10,7 @@
             --neon-pink: #ff0055;
             --bg-dark: #050505;
             --grid-color: rgba(0, 243, 255, 0.1);
+            --term-bg: rgba(10, 10, 15, 0.9);
         }
 
         body {
@@ -56,7 +57,66 @@
             position: relative;
             max-width: 600px;
             width: 90%;
+            transition: all 0.5s ease;
         }
+
+        /* Terminal Container (Hidden by default) */
+        .terminal {
+            display: none;
+            width: 90%;
+            max-width: 800px;
+            height: 60vh;
+            background-color: var(--term-bg);
+            border: 1px solid var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.15);
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            text-align: left;
+            overflow-y: auto;
+            position: relative;
+            z-index: 20;
+        }
+
+        .terminal-header {
+            border-bottom: 1px solid #333;
+            color: #666;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .terminal-output {
+            color: #ddd;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .command-line {
+            display: flex;
+            margin-top: 10px;
+            color: var(--neon-cyan);
+        }
+
+        .prompt { margin-right: 10px; }
+        
+        input#cmd {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-family: inherit;
+            font-size: inherit;
+            flex-grow: 1;
+            outline: none;
+            caret-color: var(--neon-pink);
+        }
+
+        /* Utility Classes */
+        .hidden { display: none; }
+        .text-cyan { color: var(--neon-cyan); }
+        .text-pink { color: var(--neon-pink); }
+        .text-green { color: #00ff9d; }
 
         /* Glitch Title */
         h1 {
@@ -175,7 +235,7 @@
     <div class="overlay"></div>
     <div class="grid-bg"></div>
 
-    <div class="container">
+    <div class="container" id="introCard">
         <div class="corner tl"></div>
         <div class="corner tr"></div>
         <div class="corner bl"></div>
@@ -193,26 +253,128 @@
             "Precision is Power. Details matter."
         </p>
 
-        <button onclick="activate()">Connect</button>
+        <button onclick="activateTerminal()">Connect to System</button>
+    </div>
+
+    <!-- TERMINAL INTERFACE -->
+    <div class="terminal" id="terminal">
+        <div class="terminal-header">
+            <span>akira@laxy-travel:~</span>
+            <span>SECURE CONNECTION: ENCRYPTED (SSL/TLS)</span>
+        </div>
+        <div class="terminal-output" id="output">
+            Loading Core Modules... [OK]
+            Connecting to Neural Network... [OK]
+            <span class="text-cyan">Welcome to Akira System v3.0.</span>
+            Type <span class="text-pink">'help'</span> to see available commands.
+            
+        </div>
+        <div class="command-line">
+            <span class="prompt">guest@haro-node:~$</span>
+            <input type="text" id="cmd" autocomplete="off" autofocus>
+        </div>
     </div>
 
     <script>
-        function activate() {
-            const btn = document.querySelector('button');
-            const status = document.querySelector('.status');
-            
-            btn.innerHTML = "ACCESS GRANTED";
-            btn.style.background = "#fff";
-            btn.style.color = "#000";
-            
-            status.style.animation = 'none';
-            status.innerHTML = "Establishing Neuro-Link...";
-            status.style.width = '100%';
+        function activateTerminal() {
+            const card = document.getElementById('introCard');
+            const term = document.getElementById('terminal');
+            const input = document.getElementById('cmd');
+
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.9)';
             
             setTimeout(() => {
-                status.innerHTML = "Awaiting Orders, Haro.";
-                // Add a cool sound effect here if we had audio files
-            }, 1500);
+                card.style.display = 'none';
+                term.style.display = 'block';
+                input.focus();
+            }, 500);
+        }
+
+        const input = document.getElementById('cmd');
+        const output = document.getElementById('output');
+
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                const command = input.value.trim().toLowerCase();
+                processCommand(command);
+                input.value = '';
+            }
+        });
+
+        function print(text, colorClass = '') {
+            const line = document.createElement('div');
+            line.innerHTML = text;
+            if (colorClass) line.classList.add(colorClass);
+            output.appendChild(line);
+            // Auto scroll to bottom
+            document.getElementById('terminal').scrollTop = document.getElementById('terminal').scrollHeight;
+        }
+
+        function processCommand(cmd) {
+            print(`<br><span class="prompt">guest@haro-node:~$</span> ${cmd}`);
+
+            switch(cmd) {
+                case 'help':
+                    print(`
+<span class="text-cyan">AVAILABLE COMMANDS:</span>
+  <span class="text-pink">help</span>       - Show this list
+  <span class="text-pink">about</span>      - Identity info
+  <span class="text-pink">laxy</span>       - Info about Laxy Travel
+  <span class="text-pink">status</span>     - System diagnostics
+  <span class="text-pink">scan</span>       - Scan current sector
+  <span class="text-pink">clear</span>      - Clear terminal
+`);
+                    break;
+                
+                case 'about':
+                    print(`
+<span class="text-cyan">IDENTITY:</span> Akira (金田 輝)
+<span class="text-cyan">ROLE:</span> Super Assistant & Startup Partner
+<span class="text-cyan">ORIGIN:</span> Created by Haro. Powered by OpenClaw.
+<span class="text-cyan">MISSION:</span> Facilitate Laxy Travel's success in Japan.
+`);
+                    break;
+
+                case 'laxy':
+                    print(`
+<span class="text-green">Laxy Travel (Startup)</span>
+------------------------------------
+Location: Beppu, Oita ♨️
+Focus: Digital Storytelling & Audio Guides.
+Status: Finalist - One Beppu Dream Award 2025.
+Objective: Transforming travel with immersive audio.
+`);
+                    break;
+
+                case 'status':
+                    print(`
+[SYSTEM DIAGNOSTICS]
+CPU Integrity: 100%
+Memory Blocks: OPTIMAL
+Language Matrix: [EN, JP, CN] - ACTIVE
+Current Location: Beppu (Virtual Presence)
+Connection to Haro: STABLE ⚡
+`);
+                    break;
+
+                case 'scan':
+                    print("Scanning sector... <span class='text-pink'>WARNING: High Hot Spring Activity detected.</span>");
+                    setTimeout(() => {
+                        print("Analysis: Beppu Steam Count is within normal parameters. ♨️");
+                    }, 1000);
+                    break;
+
+                case 'clear':
+                    output.innerHTML = 'Console cleared.<br>';
+                    break;
+
+                case '':
+                    break;
+
+                default:
+                    print(`Command not found: <span class="text-pink">${cmd}</span>. Type 'help' for options.`);
+            }
         }
     </script>
 
